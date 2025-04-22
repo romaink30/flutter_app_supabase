@@ -14,7 +14,7 @@ class AuthService {
     final response = await _supabase.from('user').insert([{
       'email': email,
       'password': password,
-      'roles': '0 0 0 0',  // Par défaut, assigner des rôles
+      'roles': '0 0 0 0',  // Par défaut
     }]);
 
     return await _supabase.auth.signUp(

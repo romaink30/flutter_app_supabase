@@ -17,14 +17,13 @@ class _ProfilePageState extends State<ProfilePage> {
   PlatformFile? _selectedFile;
   bool _isUploading = false;
 
-  // Modification de logout pour aller à la page d'accueil
   void logout() async {
     try {
-      await authService.logout();  // Utilisation de logout au lieu de signOut
+      await authService.logout();
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
-        (route) => false,  // Cela supprime toutes les pages précédentes
+        (route) => false,
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -33,7 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Fonction pour choisir un fichier
   Future pickAnyFile() async {
     final result = await FilePicker.platform.pickFiles(
       withData: true,
@@ -47,38 +45,32 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // Fonction pour uploader le fichier
   Future uploadFile(String fileName, Uint8List fileBytes) async {
     setState(() {
       _isUploading = true;
     });
 
-    // Récupérer l'UID de l'utilisateur
     final userUid = authService.getCurrentUserUid();
-
-    // Encoder le nom du fichier pour éviter les caractères spéciaux invalides
     final bettername = fileName.replaceAll(RegExp(r'[^\w\-\.]'), "");
     final encodedFileName = Uri.encodeComponent(bettername);
-    final path = '/$userUid/$encodedFileName';  // Créer le chemin basé sur l'UID de l'utilisateur
+    final path = '/$userUid/$encodedFileName';
 
     try {
-      // Upload du fichier dans le bucket 'upload' à l'emplacement spécifique
-      final response = await Supabase.instance.client.storage
+      await Supabase.instance.client.storage
           .from('upload')
           .uploadBinary(
-            path,  // Utilisation du chemin avec l'UID de l'utilisateur
+            path,
             fileBytes,
-            fileOptions: const FileOptions(upsert: true), // 'upsert' assure que le fichier sera écrasé s'il existe déjà
+            fileOptions: const FileOptions(upsert: true),
           );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Fichier téléchargé avec succès")),
+        const SnackBar(content: Text("✅ Fichier téléchargé avec succès")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur lors du téléversement: $e")),
+        SnackBar(content: Text("❌ Erreur lors du téléversement: $e")),
       );
-      print("Erreur lors du téléversement: $e"); // Log de l'erreur pour plus de détails
     } finally {
       setState(() {
         _isUploading = false;
@@ -110,52 +102,78 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFF2C3E50),
       appBar: AppBar(
-        title: Text(currentEmail ?? "Utilisateur"),
+       title: Text(
+          currentEmail,
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF2C3E50),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: logout,  // Modification de la fonction de déconnexion
+            color: Color.fromARGB(255, 255, 255, 255),
+            onPressed: logout,
           )
         ],
       ),
       body: Center(
         child: Card(
+          color: Colors.white,
+          elevation: 10,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           margin: const EdgeInsets.all(24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  "Sélectionner un fichier à téléverser",
-                  style: TextStyle(fontSize: 18),
+                  "📁 Uploader un fichier",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2C3E50),
+                  ),
                 ),
                 const SizedBox(height: 16),
-                _selectedFile != null
-                    ? Text("📄 ${_selectedFile!.name}")
-                    : const Text("Aucun fichier sélectionné"),
+                Text(
+                  _selectedFile != null
+                      ? "Fichier sélectionné : ${_selectedFile!.name}"
+                      : "Aucun fichier sélectionné",
+                  style: const TextStyle(fontSize: 16),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
                   onPressed: pickAnyFile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3498DB),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                   icon: const Icon(Icons.attach_file),
                   label: const Text("Choisir un fichier"),
                 ),
                 const SizedBox(height: 20),
-                // Nouveau bouton pour uploader les fichiers
                 ElevatedButton.icon(
                   onPressed: _selectedFile == null || _isUploading
                       ? null
                       : () async {
                           await uploadFile(_selectedFile!.name, _selectedFile!.bytes!);
                         },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF27AE60),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                   icon: const Icon(Icons.upload),
-                  label: const Text("Upload"),
+                  label: const Text("Téléverser"),
                 ),
                 if (_isUploading) ...[
                   const SizedBox(height: 20),
-                  const CircularProgressIndicator(),
+                  const CircularProgressIndicator(color: Color(0xFF2980B9)),
                 ]
               ],
             ),

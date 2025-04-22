@@ -20,23 +20,38 @@ class _HomePageState extends State<HomePage> {
     final user = Supabase.instance.client.auth.currentUser;
 
     return Scaffold(
+      backgroundColor: const Color(0xFF2C3E50),
       appBar: AppBar(
-        title: const Text("Accueil"),
+        backgroundColor: const Color(0xFF2C3E50),
+        title: const Text(
+          "Accueil",
+          style: TextStyle(color: Colors.white),
+        ),
         actions: user == null
             ? [
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
                   },
-                  child: const Text("Connexion", style: TextStyle(color: Color.fromARGB(255, 0, 106, 255))),
+                  child: const Text(
+                    "Connexion",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const RegisterPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterPage()),
+                    );
                   },
-                  child: const Text("Inscription", style: TextStyle(color: Color.fromARGB(255, 0, 106, 255))),
+                  child: const Text(
+                    "Inscription",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ]
             : [
@@ -45,28 +60,36 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       user.email ?? '',
-                      style: const TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.logout),
+                  icon: const Icon(Icons.logout, color: Colors.white),
                   onPressed: () async {
                     await authService.logout();
                     if (mounted) {
                       setState(() {});
                     }
                   },
-                )
+                ),
               ],
       ),
       body: Center(
         child: user == null
-            ? const Text(
-                "Bienvenue sur notre application de systeme d\'uploads !",
-                style: TextStyle(fontSize: 20),
+            ? const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text(
+                  "Bienvenue sur notre application de système d'uploads !",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               )
-            : const ProfilePage(), 
+            : const ProfilePage(),
       ),
     );
   }
