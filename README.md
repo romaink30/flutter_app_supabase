@@ -23,6 +23,6 @@ Le projet a été réalisé dans le cadre d’un projet scolaire à deux personn
 
 1. **Cloner le projet :**
 
-   git clone https://github.com/romaink30/Flutter-Epsilon.git
+   git clone https://github.com/romaink30/flutter_app_supabase.git
    cd flutter_app_supabase
    Flutter run ou vous pouvez le run directement sur votre émulateur ou un appareil
