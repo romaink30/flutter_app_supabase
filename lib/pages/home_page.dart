@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
                   icon: const Icon(Icons.logout),
                   onPressed: () async {
-                    await authService.signOut();
+                    await authService.logout();
                     if (mounted) {
                       setState(() {});
                     }
