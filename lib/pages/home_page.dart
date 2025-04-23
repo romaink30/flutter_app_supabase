@@ -76,20 +76,70 @@ class _HomePageState extends State<HomePage> {
               ],
       ),
       body: Center(
-        child: user == null
-            ? const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text(
-                  "Bienvenue sur notre application de système d'uploads !",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
+  child: user == null
+      ? SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                "Bonsai Coach Academie",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-              )
-            : const ProfilePage(),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Plateforme d'apprentissage de l’art du bonsaï",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.white70,
+                ),
+              ),
+              SizedBox(height: 32),
+              Text(
+                "Mes parcours & badges",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.white70,
+                ),
+              ),
+              SizedBox(height: 24),
+              Text(
+                "Badges disponibles",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white60,
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "🎓 Apprenti\n🫱 Compagnon\n🍃 Passeur\n⭐ Guide",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white60,
+                ),
+              ),
+              SizedBox(height: 40),
+              Text(
+                "Copyright 2024 © EPSI Lille",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+        )
+      : const ProfilePage(),
       ),
     );
   }
