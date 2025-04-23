@@ -26,5 +26,11 @@ Le projet a été réalisé dans le cadre d’un projet scolaire à deux personn
    git clone https://github.com/romaink30/flutter_app_supabase.git 
    
    cd flutter_app_supabase
+
+   2. **Installer les dépendances :**
+
+   flutter pub get
+
+   3. **Lancer l'application :**
    
-   Flutter run ou vous pouvez le run directement sur votre émulateur ou un appareil
+   Flutter run ou vous pouvez le run directement sur votre émulateur ou votre appareil physique.
