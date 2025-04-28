@@ -14,7 +14,7 @@ class AuthService {
     final response = await _supabase.from('user').insert([{
       'email': email,
       'password': password,
-      'roles': '0 0 0 0',  // Par défaut
+      'roles': '0 0 0 0', 
     }]);
 
     return await _supabase.auth.signUp(
@@ -27,7 +27,7 @@ class AuthService {
     try {
       await _supabase.auth.signOut();
     } catch (e) {
-      rethrow;  // Rejette l'erreur pour pouvoir la traiter ailleurs si nécessaire
+      rethrow;  
     }
   }
 
@@ -40,6 +40,6 @@ class AuthService {
   String? getCurrentUserUid() {
     final session = _supabase.auth.currentSession;
     final user = session?.user;
-    return user?.id;  // Retourne l'UID de l'utilisateur
+    return user?.id;  
   }
 }

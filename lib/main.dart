@@ -6,8 +6,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://pmviqfvvzquiullnmbts.supabase.co/',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtdmlxZnZ2enF1aXVsbG5tYnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUzMzI5NjQsImV4cCI6MjA2MDkwODk2NH0.Zek4mLvMqmgtZEtW0y7uuumRwuixo4ZMPGO_7m8qNXQ',
+    url: 'https://eevzihiyvpigfiwsybuy.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVldnppaGl5dnBpZ2Zpd3N5YnV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1MDkwMzMsImV4cCI6MjA2MTA4NTAzM30.WeUkX7c7wOY2uhQGJ-teADCIKrJEI6lts8RMI_BgNDY',
   );
 
   runApp(const MyApp());
@@ -27,3 +27,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+ 

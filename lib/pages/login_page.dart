@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/auth/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_application_1/pages/register_page.dart';
-import 'package:flutter_application_1/pages/profile_page.dart';
+import 'package:flutter_application_1/pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,20 +11,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final authService = AuthService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   void login() async {
-    final email = _emailController.text;
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     try {
-      await authService.signInWithEmailPassword(email, password);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfilePage()),
+      final res = await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
       );
+
+      if (res.user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -37,21 +42,21 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2C3E50),
+      backgroundColor: const Color.fromARGB(255, 184, 192, 137),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2C3E50),
+        backgroundColor: const Color(0xFF3E4C28),
         title: const Text(
           "Connexion",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color(0xFFF5F5DC)),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Color(0xFFF5F5DC)),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 50),
         children: [
           Center(
             child: Image.asset(
-              'assets/images/connexion.png',
+              'assets/images/brasserie_logo.png',
               width: 150,
               height: 150,
             ),
@@ -59,12 +64,12 @@ class _LoginPageState extends State<LoginPage> {
           const SizedBox(height: 30),
           TextField(
             controller: _emailController,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Color(0xFFF5F5DC)),
             decoration: InputDecoration(
               labelText: "Email",
-              labelStyle: const TextStyle(color: Colors.white),
+              labelStyle: const TextStyle(color: Color(0xFFF5F5DC)),
               filled: true,
-              fillColor: Colors.white10,
+              fillColor: Color(0xFF3E4C28),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -72,12 +77,12 @@ class _LoginPageState extends State<LoginPage> {
           TextField(
             controller: _passwordController,
             obscureText: true,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Color(0xFFF5F5DC)),
             decoration: InputDecoration(
               labelText: "Mot de passe",
-              labelStyle: const TextStyle(color: Colors.white),
+              labelStyle: const TextStyle(color: Color(0xFFF5F5DC)),
               filled: true,
-              fillColor: Colors.white10,
+              fillColor: Color(0xFF3E4C28),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -85,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
           ElevatedButton(
             onPressed: login,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF007BFF),
+              backgroundColor: const Color(0xFFC28840),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
@@ -105,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
             child: const Center(
               child: Text(
                 "Pas de compte ? S'enregistrer",
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
               ),
             ),
           ),

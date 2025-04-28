@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/CartPage.dart';
+import 'package:flutter_application_1/pages/ReservationsPage.dart';
+import 'package:flutter_application_1/pages/product_page.dart';
 import 'package:flutter_application_1/pages/profile_page.dart';
+import 'package:flutter_application_1/pages/ReservationsPage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 import 'register_page.dart';
@@ -14,18 +18,41 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final authService = AuthService();
+  int selectedIndex = 0;
+
+  final List<Widget> pages = [
+    Center(
+      child: Text(
+        'Bienvenue dans notre brasserie artisanale 🍺',
+        style: TextStyle(fontSize: 20, color: Color(0xFF3E4C28)),
+      ),
+    ),
+    ProductPage(),
+    CartPage(),
+    ReservationsPage(), 
+    ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final user = Supabase.instance.client.auth.currentUser;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF2C3E50),
+      backgroundColor: const Color.fromARGB(255, 184, 192, 137),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF2C3E50),
-        title: const Text(
-          "Accueil",
-          style: TextStyle(color: Colors.white),
+        backgroundColor: const Color(0xFF3E4C28),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/images/brasserie_logo.png',
+              height: 50,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              "Accueil",
+              style: TextStyle(color: Color(0xFFF5F5DC)),
+            ),
+          ],
         ),
         actions: user == null
             ? [
@@ -38,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: const Text(
                     "Connexion",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Color(0xFFF5F5DC)),
                   ),
                 ),
                 TextButton(
@@ -50,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: const Text(
                     "Inscription",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Color(0xFFF5F5DC)),
                   ),
                 ),
               ]
@@ -60,12 +87,12 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       user.email ?? '',
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Color(0xFFF5F5DC)),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.white),
+                  icon: const Icon(Icons.logout, color: Color(0xFFF5F5DC)),
                   onPressed: () async {
                     await authService.logout();
                     if (mounted) {
@@ -75,71 +102,29 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
       ),
-      body: Center(
-  child: user == null
-      ? SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text(
-                "Bonsai Coach Academie",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+      body: pages[selectedIndex],
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: const Color(0xFF3E4C28),
+          primaryColor: const Color(0xFFC28840),
+          textTheme: Theme.of(context).textTheme.copyWith(
+                bodySmall: const TextStyle(color: Color(0xFFF5F5DC)),
               ),
-              SizedBox(height: 16),
-              Text(
-                "Plateforme d'apprentissage de l’art du bonsaï",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white70,
-                ),
-              ),
-              SizedBox(height: 32),
-              Text(
-                "Mes parcours & badges",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  color: Colors.white70,
-                ),
-              ),
-              SizedBox(height: 24),
-              Text(
-                "Badges disponibles",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.white60,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                "🎓 Apprenti\n🫱 Compagnon\n🍃 Passeur\n⭐ Guide",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white60,
-                ),
-              ),
-              SizedBox(height: 40),
-              Text(
-                "Copyright 2024 © EPSI Lille",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white54,
-                ),
-              ),
-            ],
-          ),
-        )
-      : const ProfilePage(),
+        ),
+        child: BottomNavigationBar(
+          selectedItemColor: const Color(0xFFC28840),
+          unselectedItemColor: const Color(0xFFF5F5DC),
+          currentIndex: selectedIndex,
+          onTap: (index) => setState(() => selectedIndex = index),
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+            BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Produits'),
+            BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Panier'),
+            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'Réservations'), 
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+          ],
+        ),
       ),
     );
   }
