@@ -26,7 +26,7 @@ class _CartPageState extends State<CartPage> {
         };
       }).toList();
 
-      final response = await Supabase.instance.client.from('reservations').insert(reservations).select().single();
+      final response = await Supabase.instance.client.from('reservations').insert(reservations).select();
       setState(() {
         GlobalCart.items.clear();
       });

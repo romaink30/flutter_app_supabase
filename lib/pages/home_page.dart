@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
             BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Produits'),
             BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Panier'),
-            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'Réservations'), 
+            BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'Mes réservations'), 
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
           ],
         ),
