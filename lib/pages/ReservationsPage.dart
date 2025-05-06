@@ -13,38 +13,65 @@ class _ReservationsPageState extends State<ReservationsPage> {
   final SupabaseClient supabase = Supabase.instance.client;
   List<Map<String, dynamic>> _reservations = [];
 
-  final Map<String, String> productNames = {
-    '1': 'Blonde',
-    '2': 'Brune',
-    '3': 'IPA',
-    '4': 'Whiskey',
-    '5': 'GIN',
-  };
-
   @override
   void initState() {
     super.initState();
     _fetchReservations();
   }
 
+  // Fonction pour formater la date
+  String formatDate(String isoDate) {
+    final dateTime = DateTime.parse(isoDate);
+    return DateFormat('dd-MM-yyyy HH:mm:ss').format(dateTime);
+  }
+
+  // Récupération des réservations
   Future<void> _fetchReservations() async {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
 
-    final data = await supabase
+    final reservationsData = await supabase
         .from('reservations')
-        .select('quantity, reservation_date, status, product_id, price')
+        .select('quantity, status, product_id, price, created_at')
         .eq('user_id', userId)
         .order('created_at', ascending: false);
 
-    setState(() {
-      _reservations = List<Map<String, dynamic>>.from(data);
-    });
-  }
+    if (reservationsData.isNotEmpty) {
+      final productIds = reservationsData.map((r) => r['product_id']).toList();
 
-  String formatDate(String isoDate) {
-    final dateTime = DateTime.parse(isoDate);
-    return DateFormat('dd-MM-yyyy HH:mm:ss').format(dateTime); 
+      List<Map<String, dynamic>> productsData = [];
+
+      // Récupérer les produits
+      for (var productId in productIds) {
+        final productData = await supabase
+            .from('products')
+            .select('id, name, image')
+            .eq('id', productId)
+            .single();  // Attendre une réponse unique pour chaque produit
+        if (productData != null) {
+          productsData.add(productData);
+        }
+      }
+
+      final Map<int, Map<String, dynamic>> productsMap = {
+        for (var p in productsData) p['id']: p,
+      };
+
+      setState(() {
+        _reservations = reservationsData.map((r) {
+          final product = productsMap[r['product_id']];
+          return {
+            'quantity': r['quantity'],
+            'status': r['status'],
+            'product_id': r['product_id'],
+            'price': r['price'],
+            'created_at': r['created_at'],
+            'product_name': product?['name'] ?? 'Produit inconnu',
+            'product_image_url': product?['image'] ?? '',  // Assure-toi que l'URL est présente
+          };
+        }).toList();
+      });
+    }
   }
 
   @override
@@ -60,14 +87,11 @@ class _ReservationsPageState extends State<ReservationsPage> {
         child: _reservations.isEmpty
             ? const Center(
                 child: Text('Aucune réservation trouvée.',
-                    style: TextStyle(fontSize: 16, color: Color(0xFF3E4C28))),
-              )
+                    style: TextStyle(fontSize: 16, color: Color(0xFF3E4C28))))
             : ListView.builder(
                 itemCount: _reservations.length,
                 itemBuilder: (context, index) {
                   final r = _reservations[index];
-
-                  final productName = productNames[r['product_id'].toString()] ?? 'Produit non trouvé';
 
                   return Card(
                     color: const Color(0xFF3E4C28),
@@ -78,7 +102,16 @@ class _ReservationsPageState extends State<ReservationsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Produit : $productName',
+                          // Affichage de l'image du produit
+                          if (r['product_image'] != null && r['product_image'].isNotEmpty)
+                            Image.network(
+                              r['product_image'] ?? '',  // S'assurer qu'il n'y a pas de null
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          const SizedBox(height: 8),
+                          Text('Produit : ${r['product_name']}',
                               style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -86,7 +119,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                           const SizedBox(height: 8),
                           Text('Quantité : ${r['quantity']}',
                               style: const TextStyle(color: Color(0xFFEDEBD0))),
-                          Text('Date : ${formatDate(r['reservation_date'])}',
+                          Text('Date : ${formatDate(r['created_at'])}',
                               style: const TextStyle(color: Color(0xFFEDEBD0))),
                           if (r['price'] != null)
                             Text('Prix : ${r['price'].toStringAsFixed(2)} €',
@@ -109,7 +142,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),

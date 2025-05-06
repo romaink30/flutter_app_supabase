@@ -21,7 +21,7 @@ class _CartPageState extends State<CartPage> {
           'user_id': user.id,
           'product_id': item.id, 
           'quantity': item.quantity,
-          'reservation_date': DateTime.now().toIso8601String(),
+          'created_at': DateTime.now().toIso8601String(),
           'status': 'en attente',
         };
       }).toList();

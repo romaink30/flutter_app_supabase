@@ -64,17 +64,6 @@ class _ProductPageState extends State<ProductPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF3E4C28),
         title: const Text("Nos Produits", style: TextStyle(color: Color(0xFFF5F5DC))),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartPage()),
-              );
-            },
-            icon: const Icon(Icons.shopping_cart, color: Color(0xFFF5F5DC)),
-          ),
-        ],
       ),
       body: products.isEmpty
           ? const Center(child: Text("Aucun produit disponible"))
