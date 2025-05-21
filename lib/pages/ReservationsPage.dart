@@ -19,13 +19,11 @@ class _ReservationsPageState extends State<ReservationsPage> {
     _fetchReservations();
   }
 
-  // Fonction pour formater la date
   String formatDate(String isoDate) {
     final dateTime = DateTime.parse(isoDate);
     return DateFormat('dd-MM-yyyy HH:mm:ss').format(dateTime);
   }
 
-  // Récupération des réservations
   Future<void> _fetchReservations() async {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
@@ -41,13 +39,12 @@ class _ReservationsPageState extends State<ReservationsPage> {
 
       List<Map<String, dynamic>> productsData = [];
 
-      // Récupérer les produits
       for (var productId in productIds) {
         final productData = await supabase
             .from('products')
             .select('id, name, image')
             .eq('id', productId)
-            .single();  // Attendre une réponse unique pour chaque produit
+            .single();  
         if (productData != null) {
           productsData.add(productData);
         }
@@ -67,7 +64,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
             'price': r['price'],
             'created_at': r['created_at'],
             'product_name': product?['name'] ?? 'Produit inconnu',
-            'product_image_url': product?['image'] ?? '',  // Assure-toi que l'URL est présente
+            'product_image_url': product?['image'] ?? '',  
           };
         }).toList();
       });
@@ -102,10 +99,9 @@ class _ReservationsPageState extends State<ReservationsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Affichage de l'image du produit
                           if (r['product_image'] != null && r['product_image'].isNotEmpty)
                             Image.network(
-                              r['product_image'] ?? '',  // S'assurer qu'il n'y a pas de null
+                              r['product_image'] ?? '',  
                               width: 50,
                               height: 50,
                               fit: BoxFit.cover,
