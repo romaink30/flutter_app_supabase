@@ -12,36 +12,66 @@ class _CartPageState extends State<CartPage> {
   Future<void> _checkout() async {
     try {
       final user = Supabase.instance.client.auth.currentUser;
-      if (user == null) {
-        throw Exception("Utilisateur non authentifié");
+      if (user == null) throw Exception("Utilisateur non authentifié");
+
+      final client = Supabase.instance.client;
+
+      for (final item in GlobalCart.items) {
+        // 1. Récupérer le stock actuel
+        final stockResponse = await client
+            .from('products') // Change le nom de la table si différent
+            .select('stock')
+            .eq('id', item.id)
+            .single();
+
+        final currentStock = stockResponse['stock'] as int;
+
+        if (currentStock >= item.quantity) {
+          // 2. Décrémenter le stock
+          await client
+              .from('products')
+              .update({'stock': currentStock - item.quantity})
+              .eq('id', item.id);
+
+          // 3. Enregistrer la réservation
+          await client.from('reservations').insert({
+            'user_id': user.id,
+            'product_id': item.id,
+            'quantity': item.quantity,
+            'created_at': DateTime.now().toIso8601String(),
+            'status': 'en attente',
+          });
+        } else {
+          // Stock insuffisant
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              'Stock insuffisant pour "${item.name}" (stock disponible : $currentStock)',
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ));
+          return;
+        }
       }
 
-      final reservations = GlobalCart.items.map((item) {
-        return {
-          'user_id': user.id,
-          'product_id': item.id, 
-          'quantity': item.quantity,
-          'created_at': DateTime.now().toIso8601String(),
-          'status': 'en attente',
-        };
-      }).toList();
-
-      final response = await Supabase.instance.client.from('reservations').insert(reservations).select();
+      // 4. Vider le panier
       setState(() {
         GlobalCart.items.clear();
       });
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Réservation réussie !'),
+        backgroundColor: Colors.green,
       ));
-
     } catch (e) {
       print("Erreur lors du checkout: $e");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Une erreur est survenue: ${e.toString()}'),
+        backgroundColor: Colors.red,
       ));
     }
   }
+
   double calculateTotal() {
     double total = 0.0;
     for (var item in GlobalCart.items) {
@@ -62,7 +92,12 @@ class _CartPageState extends State<CartPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GlobalCart.items.isEmpty
-            ? Center(child: Text("Votre panier est vide", style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))))
+            ? Center(
+                child: Text(
+                  "Votre panier est vide",
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                ),
+              )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -94,7 +129,7 @@ class _CartPageState extends State<CartPage> {
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: _checkout, 
+                    onPressed: _checkout,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFC28840),
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -117,7 +152,11 @@ class CartItemWidget extends StatelessWidget {
   final Function(int) onQuantityChanged;
   final VoidCallback onRemove;
 
-  CartItemWidget({required this.item, required this.onQuantityChanged, required this.onRemove});
+  CartItemWidget({
+    required this.item,
+    required this.onQuantityChanged,
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
