@@ -4,7 +4,7 @@
 
 Ce projet est une **application mobile développée en Flutter**, connectée à **Supabase**. Elle propose un **système complet d'authentification**, ainsi qu'une **fonctionnalité de réservation de produits** dans une brasserie. Les utilisateurs peuvent parcourir les produits (alcools), les ajouter à un **panier**, puis **finaliser leur réservation**.
 
-Le projet a été réalisé dans le cadre d’un projet scolaire à deux personnes.
+Le projet a été réalisé dans le cadre d’un projet scolaire en solo.
 
 ## 🔧 Fonctionnalités
 
